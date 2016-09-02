@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Soket IO</title>
+    <!-- Bootstrap core CSS -->
+    <!--<link href="/bootstrap.css" rel="stylesheet">-->
+
+    <link href="public/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="public/stylesheets/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="public/stylesheets/starter-template.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="/javascripts/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="public/javascripts/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">SOCKET IO CHAT</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+<div class="form-group" style="margin-top:30px">
+
+<div id="chatScreen" class="row">
+</div>
+
+</div>
+
+
+<form style="margin-top:30px">
+  <div class="form-group">
+    <textarea class="form-control" id="txtMessage" placeholder="Messages"></textarea>
+  </div>
+</form>
+
+    </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="public/javascripts/jquery.min.js"><\/script>')</script>
+    <script src="public/javascripts/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="public/javascripts//ie10-viewport-bug-workaround.js"></script>
+
+    <script src="public/javascripts//jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+    $(document).ready(function(){
+        var user = prompt("Adınızı Girin")
+        var socket = io.connect();
+        $("#txtMessage").keyup(function(e){
+            var key = e.keyCode;
+            if(key==13){
+                      var message     = $("#txtMessage").val();
+                      var jsonMessage = '{"user":"'+user+'","message":"'+message.trim()+'"}';
+                      socket.emit("mesaj_post",jsonMessage,function(data){
+                            var obj = jQuery.parseJSON(data)
+                            if(user==obj.user){
+                                $("#chatScreen").append("<div class='alert alert-success' style='bacground-color:#212121'>"+obj.user+" : "+obj.message+"</div>");
+                            }else {
+                                $("#chatScreen").append("<div class='alert alert-info'>"+obj.user+" : "+obj.message+"</div>");
+                            }
+                            
+                      });
+                      $("#txtMessage").val("");
+            }
+        });
+        socket.on("mesaj_get",function(data){
+                            var obj = jQuery.parseJSON(data)
+                            if(user==obj.user){
+                                $("#chatScreen").append("<div class='alert alert-success' style='bacground-color:#212121'>"+obj.user+" : "+obj.message+"</div>");
+                            }else {
+                                $("#chatScreen").append("<div class='alert alert-info'>"+obj.user+" : "+obj.message+"</div>");
+                            }
+        });
+    });
+</script>
+  </body>
+</html>
